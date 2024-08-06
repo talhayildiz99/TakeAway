@@ -1,6 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using TakeAway.Comment.DAL.Context;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnectin");
+builder.Services.AddDbContext<CommentContext>(x =>
+{
+    x.UseNpgsql(connectionString);
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
