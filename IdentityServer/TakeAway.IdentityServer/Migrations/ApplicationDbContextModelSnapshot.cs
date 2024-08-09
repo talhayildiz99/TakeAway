@@ -8,7 +8,7 @@ using TakeAway.IdentityServer.Data;
 
 #nullable disable
 
-namespace TakeAway.IdentityServer.Data.Migrations
+namespace TakeAway.IdentityServer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot

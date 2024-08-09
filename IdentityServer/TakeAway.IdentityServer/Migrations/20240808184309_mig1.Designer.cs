@@ -9,10 +9,10 @@ using TakeAway.IdentityServer.Data;
 
 #nullable disable
 
-namespace TakeAway.IdentityServer.Data.Migrations
+namespace TakeAway.IdentityServer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240725163839_mig1")]
+    [Migration("20240808184309_mig1")]
     partial class mig1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
