@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "DeliveryList";
+}
+
+<h1 class="text-center my-4">Sipariş Listesi Tablo Ekranı</h1>
+
+@section Scripts {
+
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+
+    <style>
+        .bg-pastel-green {
+            background-color: #b8e994; /* Pastel Yeşil */
+            color: #2d3436;
+        }
+
+        .bg-pastel-orange {
+            background-color: #ffb74d; /* Pastel Turuncu */
+            color: #2d3436;
+        }
+
+        .bg-pastel-purple {
+            background-color: #a29bfe; /* Pastel Mor */
+            color: #2d3436;
+        }
+
+        .bg-pastel-blue {
+            background-color: #74b9ff; /* Pastel Mavi */
+            color: #2d3436;
+        }
+
+        i {
+            font-size: 1.2em; /* İkon boyutunu büyüt */
+        }
+
+        .text-brown {
+            color: #8B4513; /* Kahverengi */
+        }
+    </style>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <script type="text/javascript">
+                    $(document).ready(() => {
+                        var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:7117/signalrhub").build();
+                        $("#constatus").text(connection.state);
+                        connection.start().then(() => {
+                            $("#constatus").text(connection.state);
+                            setInterval(() => {
+                                connection.invoke("GetDeliveryList");
+                            }, 5000);
+
+                        }).catch((err) => { console.log(err) });
+                        connection.on("ReceiveDeliveryList", (value) => {
+                            console.log(value);
+                            let tablehtml = `<table class="table table-hover table-responsive-lg">
+                                                    <thead class="thead-dark">
+                                                        <tr>
+                                                            <th scope="col"></th>
+                                                            <th scope="col">Sipariş Id</th>
+                                                            <th scope="col">Ürün</th>
+                                                            <th scope="col">Durum</th>
+                                                            <th scope="col">Fiyat</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>`
+                            $.each(value, (index, item) => {
+                                let rowClass = "";
+                                let icon = "";
+
+                                switch (item.status.toLowerCase()) {
+                                    case "teslim edildi":
+                                        rowClass = "bg-pastel-green";
+                                        icon = "<i class='fas fa-check-circle text-success'></i>";
+                                        break;
+                                    case "hazirlaniyor":
+                                        rowClass = "bg-pastel-orange";
+                                        icon = "<i class='fas fa-hourglass-half text-brown'></i>";
+                                        break;
+                                    case "yolda":
+                                        rowClass = "bg-pastel-purple";
+                                        icon = "<i class='fas fa-truck text-primary'></i>";
+                                        break;
+                                    default:
+                                        rowClass = "bg-pastel-blue";
+                                        icon = "<i class='fas fa-info-circle'></i>";
+                                        break;
+                                }
+
+                                tablehtml += `<tr class="${rowClass}">
+                                                        <td>${icon}</td>
+                                                        <td>${item.deliveryId}</td>
+                                                        <td>${item.product}</td>
+                                                        <td>${item.status}</td>
+                                                        <td>${item.totalPrice}</td>
+                                                    </tr>`
+                            });
+                            tablehtml += `</tbody></table>`;
+                            $("#deliverylist").html(tablehtml);
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+}
+<div id="deliverylist" class="container mt-4"></div>
